@@ -14,4 +14,35 @@ export class Product {
         unique: true
     })
     title: string;
+
+    @Column('float',{
+        default: 0
+    })
+    price:number;
+
+    //Otra forma de definir columnas
+    @Column({
+        type: 'text',
+        nullable: true //permite que el campo sea nulo
+    })
+    description:string;
+
+    @Column('text',{
+        unique: true
+    })
+    slug:string; //slug => es una cadena que identifica de forma única una entidad en la base de datos
+
+    @Column('int',{
+        default: 0
+    })
+    stock:number;
+
+    @Column('text',{
+        array: true
+    })
+    sizes: string[];
+
+    @Column('text')
+    gender: string;
+
 }

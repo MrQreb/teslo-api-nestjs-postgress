@@ -1,0 +1,14 @@
+version: '3'  # Define la versión de Docker Compose que se está utilizando. La versión 3 es compatible con las versiones más recientes de Docker y Docker Compose.
+
+services:  # Define una lista de servicios que componen tu aplicación. Cada servicio se ejecuta en su propio contenedor.
+  db:  # Nombre del servicio. Puedes referenciar este nombre en otros lugares del archivo Docker Compose o en otros contenedores.
+    image: postgres:14.3  # Define la imagen de Docker que se utilizará para este servicio. En este caso, se está utilizando PostgreSQL versión 14.3.
+    restart: always  # Configura la política de reinicio del contenedor. 'always' significa que el contenedor se reiniciará automáticamente si se detiene.
+    ports:  # Define las reglas de mapeo de puertos entre el contenedor y el host.
+     - "5432:5432"  # Mapea el puerto 5432 del contenedor al puerto 5432 del host. Esto permite acceder a la base de datos desde fuera del contenedor.
+    environment:  # Define variables de entorno que se pasarán al contenedor.
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  # Define la contraseña del usuario 'postgres' en PostgreSQL, utilizando una variable de entorno externa 'DB_PASSWORD'.
+      POSTGRES_DB: ${DB_NAME}  # Define el nombre de la base de datos que se creará al iniciar el contenedor, utilizando una variable de entorno externa 'DB_NAME'.
+    container_name: teslodb  # Especifica un nombre específico para el contenedor. Esto es útil para identificar el contenedor más fácilmente.
+    volumes:  # Define los volúmenes que se montarán en el contenedor.
+     - ./postgres:/var/lib/postgresql/data  # Mapea el directorio './postgres' en el host al directorio '/var/lib/postgresql/data' en el contenedor. Esto permite persistir los datos de PostgreSQL en el host.

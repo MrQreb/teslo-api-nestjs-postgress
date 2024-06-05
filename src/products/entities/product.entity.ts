@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 //Entity => define una clase como una entidad de la base de datos
 @Entity()
@@ -44,5 +44,20 @@ export class Product {
 
     @Column('text')
     gender: string;
+
+    //Antes de insertar
+    @BeforeInsert()
+    checkSlugInsert(){
+
+      if( !this.slug ){
+        this.slug = this.title
+      }
+      
+      this.slug = this.slug
+      .toLocaleLowerCase()
+      .replaceAll(' ','_')
+      .replaceAll("'",'')  
+
+    }
 
 }

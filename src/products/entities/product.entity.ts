@@ -1,5 +1,4 @@
-import { text } from "stream/consumers";
-import { AfterUpdate, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {  BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 //Entity => define una clase como una entidad de la base de datos
 @Entity()
@@ -69,6 +68,8 @@ export class Product {
       }
       
       this.slugExists();
+      this.truncateNumbers();
+      
 
     }
 
@@ -76,8 +77,10 @@ export class Product {
     checkSlugUpdate(){
 
       this.slugExists();
+      this.truncateNumbers();
       
     }
+
 
     slugExists():void{
         this.slug = this.slug
@@ -85,4 +88,15 @@ export class Product {
         .replaceAll(' ','_')
         .replaceAll("'",'')  
     }
+
+   truncateNumbers():void{
+
+        if( !this.price ){
+            return;
+        }
+
+        this.price = (+this.price.toFixed(2));
+
+   } 
+   
 }

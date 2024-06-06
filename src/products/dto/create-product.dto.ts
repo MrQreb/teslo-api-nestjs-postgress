@@ -24,7 +24,7 @@ export class CreateProductDto {
     @IsInt()
     @IsPositive()
     @IsOptional()
-    strock?:number;
+    stock?:number;
 
 
     @IsString({each:true}) //each:true => valida cada elemento del array

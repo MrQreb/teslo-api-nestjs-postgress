@@ -5,6 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Product } from './entities/product.entity';
+import { PaginationDto } from '../common/dtos/pagination.dto';
+
+//validate permite validar si un string es un UUID
+import {  validate as isUUID } from 'uuid';
 
 
 @Injectable()
@@ -31,7 +35,13 @@ export class ProductsService {
     
 
       //Crea una nueva instancia de la entidad Product
-      const newProduct = this.productRepository.create(createProductDto)
+      const newProduct : Product = this.productRepository.create(createProductDto)
+
+     
+
+      //Pasar todo a minusculas
+      this.converProductToLowerCase(newProduct);
+      
 
       //Guarda el producto en la base de datos
       await this.productRepository.save(newProduct);
@@ -45,38 +55,95 @@ export class ProductsService {
     }
   }
 
-  async findAll() {
+  async findAll( paginationDto: PaginationDto) {
+
+    const { limit = 10 , offset = 0} = paginationDto;
     
-    const products = await this.productRepository.find();
+    
+    const products = await this.productRepository.find({
+      take: limit, //take => permite limitar la cantidad de registros que se obtienen
+      skip: offset //skip => permite saltar una cantidad de registros
+
+      //TODO: relaciones
+    
+    });
+
+    
   
-    if(!products){
-      throw new BadRequestException('Products not found');
+    if( products.length === 0 ){
+      throw new BadRequestException('All products were not found');
     }
 
     return products;
   }
 
 
-  async findOne(id: string) {
+  async findOne(term: string) {
 
     try{      
       
-      let product = await this.productRepository.findOne({
-        where: { id }
-      });
+      let product :Product;
+
+      //Saber si es IUUD
+
+      if( isUUID(term) ){
+        product = await this.productRepository.findOneBy({
+          id: term
+        });
+      
+
+      }else{
+
+        //Instancia de query builder
+        const queryBuilder = this.productRepository.createQueryBuilder();
+
+        product = await queryBuilder
+          //Buscara por title y espera el argumento se llame title
+          .where(`LOWER(title)=:title OR LOWER(slug)=:slug`, { 
+            //Parametros de la parte del where
+            title: term.toLocaleLowerCase(), 
+            slug: term.toLocaleLowerCase()
+          }).getOne();
+          
+          // select * from Products where slug ='xx' or title = 'xx'
+      }
 
       return product;
 
     }catch(error){
       
-      throw new BadRequestException(`Product not found with term ${id}`);
+      throw new BadRequestException(`Product not found with term ${term}`);
     }
-    
-   
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    
+    try{
+
+     let product: Product = await this.productRepository.preload({
+       id: id,
+       ...updateProductDto
+     });
+
+     if(!product){
+       throw new BadRequestException(`Product not found with term ${id}`);
+     }
+    
+     //paso todas propiedades a minusculas
+     this.converProductToLowerCase(product);
+
+     await this.productRepository.save(product);
+
+     return product;
+
+    }catch(error){
+
+      this.handleBDException(error);
+
+    }
+    
+
+
   }
 
   async remove(id: string) {
@@ -84,12 +151,12 @@ export class ProductsService {
     
     try{
 
+
+      //Busco producto con mismo metodo
       let product =  await this.findOne(id);
       
       
-      this.productRepository.delete({
-        id: product.id
-      });
+      await this.productRepository.remove(product);
 
       return `Successfully deleted product with id ${id}`;
       
@@ -98,12 +165,7 @@ export class ProductsService {
 
       throw new BadRequestException(`Product not found with term ${id}`);
       
-    }
-
-
-    
-
-    // return `This action removes a #${id} product`;
+    }    
   }
 
   private handleBDException(error: any){
@@ -121,9 +183,22 @@ export class ProductsService {
       
       this.logger.error(error);
 
+  
       throw new InternalServerErrorException('Unexpected error, check the logs for more information');
 
       
-      //Manjear todos erroes centralizados
+
+      
+  }
+
+  //Convierte los datos a minisculas
+  private converProductToLowerCase(product: Product){
+     //Pasar todo a minusculas
+     product.title = product.title?.toLocaleLowerCase();
+     product.slug = product.slug?.toLocaleLowerCase();
+     product.description = product.description?.toLocaleLowerCase();
+     product.sizes = product.sizes?.map( size => size.toLocaleLowerCase() );
+     product.gender = product.gender?.toLocaleLowerCase();
+     product.tags = product.tags?.map( tag => tag.toLocaleLowerCase() );
   }
 }

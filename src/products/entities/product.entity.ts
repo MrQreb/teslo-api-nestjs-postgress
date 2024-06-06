@@ -1,4 +1,5 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { text } from "stream/consumers";
+import { AfterUpdate, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 //Entity => define una clase como una entidad de la base de datos
 @Entity()
@@ -45,19 +46,43 @@ export class Product {
     @Column('text')
     gender: string;
 
+    @Column({
+        type:'text',
+        array:true,
+        default:[],
+
+    })
+    tags: string[];
+
+
+
+
+    //Triggers 
+
     //Antes de insertar
     @BeforeInsert()
     checkSlugInsert(){
 
+      //Si no captura un slug
       if( !this.slug ){
         this.slug = this.title
       }
       
-      this.slug = this.slug
-      .toLocaleLowerCase()
-      .replaceAll(' ','_')
-      .replaceAll("'",'')  
+      this.slugExists();
 
     }
 
+    @BeforeUpdate()
+    checkSlugUpdate(){
+
+      this.slugExists();
+      
+    }
+
+    slugExists():void{
+        this.slug = this.slug
+        .toLocaleLowerCase()
+        .replaceAll(' ','_')
+        .replaceAll("'",'')  
+    }
 }

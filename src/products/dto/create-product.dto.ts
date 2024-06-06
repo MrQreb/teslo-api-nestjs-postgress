@@ -1,6 +1,7 @@
 import { IsInt, IsArray , IsNumber, IsOptional,
          IsPositive, IsString, MinLength, IsIn, 
-         Min} from "class-validator";
+         Min,
+         Max} from "class-validator";
 
 export class CreateProductDto {
    
@@ -13,6 +14,7 @@ export class CreateProductDto {
     @IsPositive()
     @IsOptional()
     @Min(150)
+    @Max(2500)
     
     price?:number;
 

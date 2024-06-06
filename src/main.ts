@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   //prefix para habilitar la ruta de la API
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1');
   
   //Validacion de Pipes
   app.useGlobalPipes(

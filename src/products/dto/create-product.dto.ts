@@ -44,4 +44,10 @@ export class CreateProductDto {
     @IsArray()
     @IsOptional()
     tags?:string[];
+
+    //relacion de la ImagenesProduct
+    @IsString({each:true}) //each:true => valida cada elemento del array
+    @IsArray()
+    @IsOptional()
+    images?:string[];
 }

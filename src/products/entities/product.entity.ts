@@ -110,5 +110,5 @@ export class Product {
         { cascade: true} //Si se elimina producto se eliminan imagenes
    )
 
-    images?: ProductImage;
+    images?: ProductImage[];
 }

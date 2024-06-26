@@ -1,4 +1,5 @@
-import {  BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {  BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductImage } from "./product-image.entity";
 
 //Entity => define una clase como una entidad de la base de datos
 @Entity()
@@ -99,4 +100,15 @@ export class Product {
 
    } 
    
+   //Relaciones
+   @OneToMany(
+
+        () => ProductImage, //Entidad a la que se relaciona
+
+        ( productImage ) => productImage.product, //Campo de la entidad relacionada que se relaciona con esta entidad
+
+        { cascade: true} //Si se elimina producto se eliminan imagenes
+   )
+
+    images?: ProductImage;
 }

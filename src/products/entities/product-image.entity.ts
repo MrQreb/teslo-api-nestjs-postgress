@@ -16,7 +16,8 @@ export class ProductImage {
 
         () => Product, //Relacion con la entidad Product
 
-        ( product ) => product.images //Campo de la entidad Product que se relaciona con esta entidad 
+        ( product ) => product.images, //Campo de la entidad Product que se relaciona con esta entidad 
+        { onDelete : 'CASCADE'} // Cuando el producto se elina, se eliminan las imagenes
 
     )
 

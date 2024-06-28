@@ -2,7 +2,7 @@ import {  BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGenerate
 import { ProductImage } from "./product-image.entity";
 
 //Entity => define una clase como una entidad de la base de datos
-@Entity()
+@Entity({ name: 'products'}) //Nombre de la tabla en la base de datos
 export class Product {
     
     @PrimaryGeneratedColumn('uuid')
@@ -107,7 +107,10 @@ export class Product {
 
         ( productImage ) => productImage.product, //Campo de la entidad relacionada que se relaciona con esta entidad
 
-        { cascade: true} //Si se elimina producto se eliminan imagenes
+        { 
+            cascade: true, //Si se elimina producto se eliminan imagenes
+            eager:true     //Carga las imagenes de forma automaticas por la relacion
+        } 
    )
 
     images?: ProductImage[];

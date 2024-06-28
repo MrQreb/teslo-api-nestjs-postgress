@@ -24,7 +24,9 @@ export class ProductsController {
 
   @Get(':term')
   findOne(@Param('term' ) term: string) {
-    return this.productsService.findOne(term);
+
+    //Metodo para regresar intermedio
+    return this.productsService.findOnePlain(term);
   }
 
   //Actualizar basado por UUID

@@ -6,6 +6,10 @@
 #env
 .env
 
+# products images
+/static/products
+
+
 # postgress
 /postgres
 

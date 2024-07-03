@@ -7,11 +7,12 @@ import { User } from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 
   imports:[
 
@@ -63,9 +64,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
 
   exports: [
-    AuthService,
     TypeOrmModule,  //Exporta pasa usar dos entidades en el controlador
-    JwtStrategy,
+    JwtStrategy, //Por si se quiere evaluar token manualmente
     PassportModule,
     JwtModule
   ]

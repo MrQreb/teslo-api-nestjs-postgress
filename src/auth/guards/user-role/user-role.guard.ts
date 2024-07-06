@@ -18,7 +18,7 @@ export class UserRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
    
-    console.log('useRoleGuard')
+    // console.log('useRoleGuard')
 
     // obtener los roles de la ruta del controlador auth
     const validRoles: string[] = this.reflector.get( META_ROLES , context.getHandler() );  
@@ -32,13 +32,13 @@ export class UserRoleGuard implements CanActivate {
 
     if( !user ) throw new BadRequestException('User not found (request)');
     // console.log({ userRoles: user.roles})
-    console.log({ user })
+    // console.log({ user })
 
     //Evaluar los roles
     for ( const role of user.roles ) {
 
       //Si el usuario tiene los roles
-      console.log( ( validRoles.includes(role) ) )
+      // console.log( ( validRoles.includes(role) ) )
       if( validRoles.includes(role) ) return true;
     }
 

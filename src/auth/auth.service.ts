@@ -44,7 +44,7 @@ export class AuthService {
       
       return {
         ...newUser,
-        token: this.getJwtToken({ email: user.email}) 
+        token: this.getJwtToken({ id: user.id}) 
        };
 
     }catch(error){
@@ -60,7 +60,7 @@ export class AuthService {
   
     const user = await this.userRepository.findOne({ 
        where: { email },
-       select: { email: true, password: true } // solo devolver estos campos
+       select: { email: true, password: true, id:true } // solo devolver estos campos
      });
 
      if(!user) throw new UnauthorizedException('email not found');
@@ -69,7 +69,7 @@ export class AuthService {
 
      return {
       ...user,
-      token: this.getJwtToken({ email: user.email}) 
+      token: this.getJwtToken({ id: user.id}) 
      };
      
     
